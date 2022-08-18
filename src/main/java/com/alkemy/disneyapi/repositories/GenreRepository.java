@@ -9,5 +9,5 @@ import com.alkemy.disneyapi.entities.Genre;
 
 @Repository
 public interface GenreRepository extends JpaRepository<Genre, String> {	
-	List<Genre> findByName(String name);
+
 }

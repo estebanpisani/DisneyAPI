@@ -1,12 +1,6 @@
 package com.alkemy.disneyapi.entities;
 
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -16,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
+@Table(name = "genres")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -28,6 +23,6 @@ public class Genre {
 	@Column(name="genre_name")
 	private String name;
 	private String image;
-	@OneToMany(mappedBy = "genre")
-	private List<Movie> movies;
+//	@OneToMany(mappedBy = "genre")
+//	private List<Movie> movies;
 }
