@@ -7,16 +7,17 @@ import lombok.Setter;
 @Setter
 public class MovieFiltersDTO {
 	private String name;
+	private String creationDate;
+	private String genre;
 	private String order;
-	
-	public MovieFiltersDTO(String name, String order) {
 
+	public MovieFiltersDTO(){
+	}
+
+	public MovieFiltersDTO(String name, String creationDate, String order) {
 		this.name = name;
+		this.creationDate = creationDate;
 		this.order = order;
-	}	
-
-	public boolean orderASC() {return this.order.compareToIgnoreCase("ASC")==0;}
-	public boolean orderDESC() {return this.order.compareToIgnoreCase("DESC")==0;}
-
+	}
 
 }

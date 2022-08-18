@@ -1,16 +1,10 @@
 package com.alkemy.disneyapi.entities;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -20,6 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
+@Table(name = "movies")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -30,13 +25,16 @@ public class Movie {
 	@GeneratedValue(generator = "uuid")
 	@GenericGenerator(name = "uuid", strategy = "uuid2")
 	private String id;
-	private String image;
 	private String title;
+	private String image;
 	private LocalDate creationDate;
 	private Integer rate;
-	@ManyToMany(mappedBy = "movies", cascade = CascadeType.ALL)
-	private List<Character> characters;
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinColumn(name="genre")
+	@JoinColumn(name="genre_id")
 	private Genre genre;
+	@Column(name="genre_id", nullable = false)
+	private String genreId;
+	@ManyToMany(mappedBy = "movies", cascade = CascadeType.ALL)
+	private List<Character> characters = new ArrayList<>();
+
 }

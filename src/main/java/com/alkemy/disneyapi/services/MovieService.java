@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
+import com.alkemy.disneyapi.dto.MovieFiltersDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,17 +26,14 @@ public class MovieService {
 	@Autowired
 	MovieMapper movieMapper;	
 	@Autowired
-	GenreRepository genreRepo;
-	@Autowired
 	MovieSpecification movieSpecification;
 	@Autowired
 	GenreService genreServ;
 	@Transactional
 	//CREATE
 	public MovieDTO saveMovie(MovieDTO dto) {
-		Movie movie = new Movie();
-		movie = movieMapper.movieDTO2Entity(dto);
-		movieRepo.save(movie);
+		Movie movie = movieMapper.movieDTO2Entity(dto);
+		Movie newMovie = movieRepo.save(movie);
 		MovieDTO result = movieMapper.movieEntity2DTO(movie, false);
 		return result;
 	}
@@ -43,74 +41,69 @@ public class MovieService {
 	@Transactional
 	//UPDATE
 	public MovieDTO updateMovie(String id, MovieDTO dto) throws Exception {
-		//Película existente.
-		Movie movie = movieRepo.getById(id);
-		//Seteo de Película existente con datos nuevos.
-			movie.setTitle(dto.getTitle());
-			movie.setRate(dto.getRate());
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-			movie.setCreationDate(LocalDate.parse(dto.getCreationDate(), formatter ));
-			movie.setImage(dto.getImage());
-			movie.setGenre(genreServ.getGenreByName(dto.getGenre()));
-			
-		movieRepo.save(movie);
-		return movieMapper.movieEntity2DTO(movie, false);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+		try {
+			Optional<Movie> result = movieRepo.findById(id);
+			if (result.isPresent()) {
+				Movie movie = result.get();
+				if(dto.getTitle() != null){
+				movie.setTitle(dto.getTitle());
+				}
+				if(dto.getRate() != null) {
+					movie.setRate(dto.getRate());
+				}
+				if(dto.getCreationDate() != null){
+					movie.setCreationDate(LocalDate.parse(dto.getCreationDate(), formatter));
+				}
+				if(dto.getImage() != null){
+					movie.setImage(dto.getImage());
+				}
+				if(dto.getGenreId() != null){
+					movie.setGenreId(dto.getGenreId());
+				}
+				Movie newMovie = movieRepo.save(movie);
+				return movieMapper.movieEntity2DTO(newMovie, false);
+			}else{
+				throw new Exception("Movie not found.");
+			}
+		} catch (Exception e){
+			throw new Exception("Movie not found.");
+		}
 	}
 	
 	//READ
-	
-	//Get all movies
-	public List<MovieBasicDTO> getAll(){
+
+	public List<MovieBasicDTO> getAllMovies(){
 		List<MovieBasicDTO> dtos= movieMapper.movieEntityList2BasicDTOList(movieRepo.findAll());
 		return dtos;
 	}
-	
-	//Get single movie
-	public MovieDTO getMovieDetail(String id) {
+
+	public MovieDTO getMovieDetails(String id) {
 		Movie movie = movieRepo.getById(id);
 		MovieDTO dto = movieMapper.movieEntity2DTO(movie, true);	
 		return dto;	
 	}
-	
-	public MovieDTO findById(String id) {
-		Movie movie = new Movie();
-		Optional<Movie> opt = movieRepo.findById(id);
-		if(opt.isPresent()) {
-			movie = opt.get();
+
+	public List<MovieDTO> findByFilters(String name, String creationDate, String genre, String order) {
+		MovieFiltersDTO filtersDTO = new MovieFiltersDTO();
+
+		if(name != null && !name.isEmpty()){
+			filtersDTO.setName(name);
 		}
-		return movieMapper.movieEntity2DTO(movie, false);
-	}
-	public MovieDTO findByTitle(String title) {
-		Movie movie = new Movie();
-		List<Movie> list = movieRepo.findByTitle(title);
-		if(!list.isEmpty()||list.get(0)!=null) {
-			movie = list.get(0);
+		if(creationDate != null && !creationDate.isEmpty()){
+			filtersDTO.setCreationDate(creationDate);
 		}
-		return movieMapper.movieEntity2DTO(movie, false);
+		if(genre != null && !genre.isEmpty()){
+			filtersDTO.setGenre(genre);
+		}
+		filtersDTO.setOrder(order);
+
+		List<Movie> movies = movieRepo.findAll(movieSpecification.getByFilters(filtersDTO));
+		List<MovieDTO> movieDTOS = movieMapper.movieEntityList2DTOList(movies, false);
+		return movieDTOS;
 	}
 
-	//No conseguí hacer funcionar filtros combinados. Por lo que creé filtros por separado.
-	//Get by title
-	public List<MovieDTO> getMoviesByTitle(String title){
-		return movieMapper.movieEntityList2DTOList(movieRepo.getMoviesByTitle(title), false);
-	}
-	
-	//Get by genre
-	public List<MovieBasicDTO> getMoviesByGenreId(String genreId){
-		return movieMapper.movieEntityList2BasicDTOList(movieRepo.getMoviesByGenreId(genreId));
-	}
-
-	//Get all by asc title
-	public List<MovieBasicDTO> getMoviesAsc(){
-		return movieMapper.movieEntityList2BasicDTOList(movieRepo.getAllMoviesByTitleAsc());
-	}
-	
-	//Get all by desc title
-	public List<MovieBasicDTO> getMoviesDesc(){
-		return movieMapper.movieEntityList2BasicDTOList(movieRepo.getAllMoviesByTitleDesc());
-	}
-	@Transactional
-	//HARD DELETE
+	// DELETE
 	public void deleteById(String id) {	
 		movieRepo.deleteById(id);
 	}

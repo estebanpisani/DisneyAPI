@@ -6,38 +6,42 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import com.alkemy.disneyapi.dto.MovieBasicDTO;
 import com.alkemy.disneyapi.dto.MovieDTO;
 import com.alkemy.disneyapi.services.MovieService;
 
-@Controller
+@RestController
 @RequestMapping("/movies")
 public class MovieController {
 	
 	@Autowired
 	private MovieService movieServ;
 	
-	@GetMapping
+	@GetMapping("/all")
 	public ResponseEntity<List<MovieBasicDTO>> getAllMovies(){
-		return ResponseEntity.ok().body(movieServ.getAll());		
+		return ResponseEntity.ok().body(movieServ.getAllMovies());
 	}
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<MovieDTO> getMovieDetails(@PathVariable String id){
-		return ResponseEntity.ok().body(movieServ.getMovieDetail(id));		
+		return ResponseEntity.ok().body(movieServ.getMovieDetails(id));
 	}
 
+	@GetMapping
+	public ResponseEntity<List<MovieDTO>> getByFilters(
+			@RequestParam(required = false) String name,
+			@RequestParam(required = false) String creationDate,
+			@RequestParam(required = false) String genre,
+			@RequestParam(required = false, defaultValue = "asc") String order
+	){
+		List<MovieDTO> movies = movieServ.findByFilters(name, creationDate, genre, order);
+		return ResponseEntity.ok(movies);
+	}
 	
-	@PostMapping(path = "/save", consumes = "application/json")
-	public ResponseEntity<MovieDTO> save(@RequestBody MovieDTO movie) throws Exception{
+	@PostMapping
+	public ResponseEntity<MovieDTO> saveMovie(@RequestBody MovieDTO movie) throws Exception{
 		MovieDTO savedMovie= movieServ.saveMovie(movie);
 		return ResponseEntity.status(HttpStatus.CREATED).body(savedMovie);	
 	}
@@ -51,28 +55,6 @@ public class MovieController {
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> delete(@PathVariable String id){	
 		movieServ.deleteById(id);
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();	
-	}
-	
-	
-	//FILTERS
-	//No logré hacer funcionar filtros combinados, por lo que creé filtros por separado usando los path indicados en el challenge.
-	
-	@GetMapping("?name={nombre}")
-	public ResponseEntity<List<MovieDTO>> getMoviesByTitle(@PathVariable String nombre){
-		return ResponseEntity.ok().body(movieServ.getMoviesByTitle(nombre));	
-	}
-	
-	@GetMapping("?genre={genreId}")
-	public ResponseEntity<List<MovieBasicDTO>> getMoviesByGenre(@PathVariable String genreId){
-		return ResponseEntity.ok().body(movieServ.getMoviesByGenreId(genreId));	
-	}	
-	
-	@GetMapping("?order={order}")
-	public ResponseEntity<List<MovieBasicDTO>> getMoviesByAsc(@PathVariable String order){
-		if(order.equalsIgnoreCase("desc")) {
-			return ResponseEntity.ok().body(movieServ.getMoviesDesc());
-		}
-		return ResponseEntity.ok().body(movieServ.getMoviesAsc());	
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 }
