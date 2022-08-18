@@ -2,6 +2,7 @@ package com.alkemy.disneyapi.mapper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,18 +38,18 @@ public class CharacterMapper {
 		character.setImage(dto.getImage());
 		character.setStory(dto.getStory());
 		character.setWeight(dto.getWeight());
-		List<Movie> movies = new ArrayList<>();
-		//Busca películas por su nombre antes de setearlas.
-		//Si es nula o si no está registrada, no la setea.
-		//Sólo se agrega si existe en la base de datos.
 			if(dto.getMovies() != null && !dto.getMovies().isEmpty()) {
-				for (MovieBasicDTO movie : dto.getMovies()) {					
-					if(movieServ.findByTitle(movie.getTitle())!=null){
-						movies.add(movieMapper.movieDTO2Entity(movieServ.findByTitle(movie.getTitle())));
+				for (MovieBasicDTO movieDTO : dto.getMovies()) {
+					Optional<Movie> result = movieRepository.findById(movieDTO.getId());
+
+					if (result.isPresent()) {
+						Movie movie = result.get();
+						character.getMovies().add(movie);
+						movie.getCharacters().add(character);
+						movieRepository.save(movie);
 					}
 				}
 			}
-		character.setMovies(movies);
 		return character;
 	}
 	/*

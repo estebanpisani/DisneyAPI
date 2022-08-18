@@ -30,7 +30,7 @@ public class Movie {
 	private LocalDate creationDate;
 	private Integer rate;
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinColumn(name="genre_id")
+	@JoinColumn(name="genre_id", insertable = false, updatable = false)
 	private Genre genre;
 	@Column(name="genre_id", nullable = false)
 	private String genreId;

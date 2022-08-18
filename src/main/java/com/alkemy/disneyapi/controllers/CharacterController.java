@@ -13,7 +13,7 @@ import com.alkemy.disneyapi.dto.CharacterDTO;
 import com.alkemy.disneyapi.mapper.CharacterMapper;
 import com.alkemy.disneyapi.services.CharacterService;
 
-@Controller
+@RestController
 @RequestMapping("/characters")
 public class CharacterController {
 	
@@ -22,7 +22,7 @@ public class CharacterController {
 	@Autowired
 	CharacterMapper characterMapper;
 
-	@GetMapping
+	@GetMapping("/all")
 	public ResponseEntity<List<CharacterBasicDTO>> getAllCharacters(){
 		return ResponseEntity.ok().body(characterServ.getAllCharacters());
 	}

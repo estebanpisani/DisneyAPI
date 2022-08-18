@@ -18,7 +18,7 @@ public class MovieMapper {
 	//@Autowired
 	//CharacterMapper characterMapper;
 	@Autowired
-	GenreService genreServ;
+	GenreMapper genreMapper;
 	
 	public Movie movieDTO2Entity(MovieDTO dto) {
 		Movie movie = new Movie();
@@ -28,7 +28,7 @@ public class MovieMapper {
 		LocalDate localDate = LocalDate.parse(dto.getCreationDate(), formatter );
 		movie.setCreationDate(localDate);
 		movie.setImage(dto.getImage());
-		movie.setGenre(genreServ.getGenreByName(dto.getGenre()));
+		movie.setGenreId(dto.getGenreId());
 		return movie;
 	}
 	
@@ -42,7 +42,7 @@ public class MovieMapper {
 		dto.setCreationDate(movie.getCreationDate().format(formatter));}
 		
 		dto.setImage(movie.getImage());
-		dto.setGenre(movie.getGenre().getName());
+		dto.setGenre(genreMapper.genreEntity2DTO(movie.getGenre()));
 		/*
 		if (loadCharacters) {
 			List<CharacterBasicDTO> charactersDTO = this.characterMapper.characterEntityList2BasicDTOList(movie.getCharacters());
@@ -80,7 +80,7 @@ public class MovieMapper {
 	}
 	
 	public List<MovieBasicDTO> movieEntityList2BasicDTOList(List<Movie> movies){
-		List<MovieBasicDTO> dtos= new ArrayList<>();
+		List<MovieBasicDTO> dtos = new ArrayList<>();
 		for (Movie movie : movies) {
 			MovieBasicDTO dto = new MovieBasicDTO();
 			dto.setTitle(movie.getTitle());
