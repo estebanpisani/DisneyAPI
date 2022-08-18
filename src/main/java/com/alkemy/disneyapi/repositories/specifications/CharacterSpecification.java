@@ -1,5 +1,7 @@
 package com.alkemy.disneyapi.repositories.specifications;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,50 +25,46 @@ public class CharacterSpecification {
 	
 	public Specification<Character> getByFilters(CharacterFiltersDTO filtersDTO){
 		return (root, query, criteriaBuilder) ->{
-			
 			List<Predicate> predicates = new ArrayList<>();
-			
-			//Filtro name
-			if(StringUtils.hasLength(filtersDTO.getName())) {
+
+			if(filtersDTO.getName() != null && filtersDTO.getName().isEmpty()) {
 				predicates.add(
 						criteriaBuilder.like(
 								criteriaBuilder.lower(root.get("name")),
 								"%" + filtersDTO.getName().toLowerCase()+"%")
 				);
 			}	
-					
-			//Filtro age
-			if(StringUtils.hasLength(filtersDTO.getAge().toString())) {
+
+			if(filtersDTO.getAge() != null && !filtersDTO.getAge().toString().isEmpty()) {
 				predicates.add(
 						criteriaBuilder.like(
 								criteriaBuilder.lower(root.get("age")),
-								"%" + filtersDTO.getName().toLowerCase()+"%")
+								"%" + filtersDTO.getAge().toString().toLowerCase()+"%")
 				);
-			}	
-			
-
-			//Filtro Movies
-			/*
-			if(!CollectionUtils.isEmpty(filtersDTO.getMovies())) {
-				Join<Movie, Character> join = root.join("movies", JoinType.INNER);
-				Expression<String> moviesId = join.get("id");
-				predicates.add(moviesId.in(filtersDTO.getMovies()));
 			}
-			*/
+
+			if(filtersDTO.getWeight() != null && !filtersDTO.getWeight().toString().isEmpty()){
+				predicates.add(criteriaBuilder.like(root.get("weight"), filtersDTO.getWeight().toString()));
+			}
+
+			if(filtersDTO.getMovies() != null && filtersDTO.getMovies().size()>=1 && !filtersDTO.getMovies().isEmpty()){
+				Join<Movie, Character> join = root.join("movies", JoinType.INNER);
+				Expression<String> movies = join.get("id");
+				predicates.add(movies.in(filtersDTO.getMovies()));
+			}
+
 			//Remove duplicates
 			query.distinct(true);
-			
-			//Order resolver
-			
-			String orderByField = "name";
-			query.orderBy(
-					filtersDTO.orderASC() ?
-							criteriaBuilder.asc(root.get(orderByField)) :
-								criteriaBuilder.desc(root.get(orderByField))	
-					);
-			
+
+			//TODO orderByDate
+			if(filtersDTO.getOrder().equalsIgnoreCase("desc")){
+				query.orderBy(criteriaBuilder.desc(root.get("name")));
+			}
+			else{
+				query.orderBy(criteriaBuilder.asc(root.get("name")));
+			}
+
 			return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-			
 		};
 		
 	}

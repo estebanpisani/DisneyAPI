@@ -1,6 +1,7 @@
 package com.alkemy.disneyapi.entities;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -26,7 +27,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "mycharacters")
+@Table(name = "characters")
 public class Character {
 	
 	@Id
@@ -44,7 +45,9 @@ public class Character {
 			CascadeType.MERGE,
 	})
 	@JoinTable(
+			name = "movies_characters",
 			joinColumns = @JoinColumn(name="character_id"),
-			inverseJoinColumns = @JoinColumn(name="movie_id"))
-	private List<Movie> movies;
+			inverseJoinColumns = @JoinColumn(name="movie_id")
+	)
+	private List<Movie> movies = new ArrayList<>();
 }

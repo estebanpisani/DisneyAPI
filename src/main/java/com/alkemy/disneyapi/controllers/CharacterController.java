@@ -6,13 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import com.alkemy.disneyapi.dto.CharacterBasicDTO;
 import com.alkemy.disneyapi.dto.CharacterDTO;
@@ -30,16 +24,27 @@ public class CharacterController {
 
 	@GetMapping
 	public ResponseEntity<List<CharacterBasicDTO>> getAllCharacters(){
-		return ResponseEntity.ok().body(characterServ.getAll());		
+		return ResponseEntity.ok().body(characterServ.getAllCharacters());
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<CharacterDTO> getCharacterDetails(@PathVariable String id){
-		return ResponseEntity.ok().body(characterServ.getCharacterDetail(id));		
+	public ResponseEntity<CharacterDTO> getCharacterDetails(@PathVariable String id) throws Exception {
+		return ResponseEntity.ok().body(characterServ.getCharacterDetails(id));
 	}
 
-	
-	@PostMapping(path = "/save", consumes = "application/json")
+	@GetMapping
+	public ResponseEntity<List<CharacterDTO>> getByFilters(
+			@RequestParam(required = false) String name,
+			@RequestParam(required = false) Integer age,
+			@RequestParam(required = false) Double weight,
+			@RequestParam(required = false) List<String> movies,
+			@RequestParam(required = false, defaultValue = "asc") String order
+	){
+		List<CharacterDTO> characters = characterServ.getByFilters(name, age, weight, movies, order);
+		return ResponseEntity.ok(characters);
+	}
+
+	@PostMapping
 	public ResponseEntity<CharacterDTO> save(@RequestBody CharacterDTO dto) throws Exception{
 		CharacterDTO savedCharacter = characterServ.saveCharacter(dto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(savedCharacter);	
@@ -57,25 +62,4 @@ public class CharacterController {
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();	
 	}
 
-	//FILTERS
-	//No logré hacer funcionar filtros combinados, por lo que creé filtros por separado usando los path indicados en el challenge.
-	
-	@GetMapping("?name={nombre}")
-	public ResponseEntity<List<CharacterDTO>> getCharactersByName(@PathVariable String nombre){
-		return ResponseEntity.ok().body(characterServ.getCharactersByName(nombre));	
-	}
-	
-	@GetMapping("?age={age}")
-	public ResponseEntity<List<CharacterBasicDTO>> getCharactersByAge(@PathVariable Integer age){
-		return ResponseEntity.ok().body(characterServ.getCharactersByAge(age));	
-	}	
-	/*
-	@GetMapping("?order={order}")
-	public ResponseEntity<List<CharacterBasicDTO>> getCharactersByOrder(@PathVariable String order){
-		if(order.equalsIgnoreCase("desc")) {
-			return ResponseEntity.ok().body(characterServ.getCharactersDesc());
-		}
-		return ResponseEntity.ok().body(characterServ.getCharactersAsc());	
-	}
-	*/
 }
