@@ -96,7 +96,7 @@ public class MovieService {
 		}
 	}
 
-	public List<MovieDTO> findByFilters(String name, String genre, String order) {
+	public List<MovieBasicDTO> findByFilters(String name, String genre, String order) {
 		MovieFiltersDTO filtersDTO = new MovieFiltersDTO();
 
 		if(name != null && !name.isEmpty()){
@@ -108,7 +108,7 @@ public class MovieService {
 		filtersDTO.setOrder(order);
 
 		List<Movie> movies = movieRepo.findAll(movieSpecification.getByFilters(filtersDTO));
-		List<MovieDTO> movieDTOS = movieMapper.movieEntityList2DTOList(movies, false);
+		List<MovieBasicDTO> movieDTOS = movieMapper.movieEntityList2BasicDTOList(movies);
 		return movieDTOS;
 	}
 

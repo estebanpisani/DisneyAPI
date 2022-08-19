@@ -19,23 +19,18 @@ public class MovieController {
 	@Autowired
 	private MovieService movieServ;
 	
-	@GetMapping("/all")
-	public ResponseEntity<List<MovieBasicDTO>> getAllMovies(){
-		return ResponseEntity.ok().body(movieServ.getAllMovies());
-	}
-	
 	@GetMapping("/{id}")
 	public ResponseEntity<MovieDTO> getMovieDetails(@PathVariable String id) throws Exception {
 		return ResponseEntity.ok().body(movieServ.getMovieDetails(id));
 	}
 
 	@GetMapping
-	public ResponseEntity<List<MovieDTO>> getByFilters(
+	public ResponseEntity<List<MovieBasicDTO>> getByFilters(
 			@RequestParam(required = false) String name,
 			@RequestParam(required = false) String genre,
-			@RequestParam(required = false, defaultValue = "asc") String order
+			@RequestParam(required = false, defaultValue = "ASC") String order
 	){
-		List<MovieDTO> movies = movieServ.findByFilters(name, genre, order);
+		List<MovieBasicDTO> movies = movieServ.findByFilters(name, genre, order);
 		return ResponseEntity.ok(movies);
 	}
 	

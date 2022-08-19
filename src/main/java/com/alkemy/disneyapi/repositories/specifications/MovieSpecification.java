@@ -41,7 +41,7 @@ public class MovieSpecification {
 			query.distinct(true);
 
 			//TODO OrderByDate
-			if(filtersDTO.getOrder().equalsIgnoreCase("desc")){
+			if(filtersDTO.getOrder().equalsIgnoreCase("DESC")){
 				query.orderBy(criteriaBuilder.desc(root.get("title")));
 			}
 			else{

@@ -22,25 +22,20 @@ public class CharacterController {
 	@Autowired
 	CharacterMapper characterMapper;
 
-	@GetMapping("/all")
-	public ResponseEntity<List<CharacterBasicDTO>> getAllCharacters(){
-		return ResponseEntity.ok().body(characterServ.getAllCharacters());
-	}
-	
 	@GetMapping("/{id}")
 	public ResponseEntity<CharacterDTO> getCharacterDetails(@PathVariable String id) throws Exception {
 		return ResponseEntity.ok().body(characterServ.getCharacterDetails(id));
 	}
 
 	@GetMapping
-	public ResponseEntity<List<CharacterDTO>> getByFilters(
+	public ResponseEntity<List<CharacterBasicDTO>> getByFilters(
 			@RequestParam(required = false) String name,
 			@RequestParam(required = false) Integer age,
 			@RequestParam(required = false) Double weight,
 			@RequestParam(required = false) List<String> movies,
 			@RequestParam(required = false, defaultValue = "asc") String order
 	){
-		List<CharacterDTO> characters = characterServ.getByFilters(name, age, weight, movies, order);
+		List<CharacterBasicDTO> characters = characterServ.getByFilters(name, age, weight, movies, order);
 		return ResponseEntity.ok(characters);
 	}
 

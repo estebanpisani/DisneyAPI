@@ -66,11 +66,6 @@ public class CharacterService {
 	}
 	
 	//READ
-	public List<CharacterBasicDTO> getAllCharacters(){
-		List<CharacterBasicDTO> dtos= characterMapper.characterEntityList2BasicDTOList(characterRepo.findAll());
-		return dtos;
-	}
-
 	public CharacterDTO getCharacterDetails(String id) throws Exception {
 		try{
 			Optional<Character> result = characterRepo.findById(id);
@@ -86,7 +81,7 @@ public class CharacterService {
 		}
 	}
 
-	public List<CharacterDTO> getByFilters(String name, Integer age, Double weight, List<String> movies, String order){
+	public List<CharacterBasicDTO> getByFilters(String name, Integer age, Double weight, List<String> movies, String order){
 		CharacterFiltersDTO filtersDTO = new CharacterFiltersDTO();
 		if(name != null && !name.isEmpty()) {
 			filtersDTO.setName(name);
@@ -103,7 +98,7 @@ public class CharacterService {
 		filtersDTO.setOrder(order);
 
 		List<Character> characters= characterRepo.findAll(characterSpecification.getByFilters(filtersDTO));
-		List<CharacterDTO> dtos = characterMapper.characterEntityList2DTOList(characters, true);
+		List<CharacterBasicDTO> dtos = characterMapper.characterEntityList2BasicDTOList(characters);
 		return dtos;
 	}
 
