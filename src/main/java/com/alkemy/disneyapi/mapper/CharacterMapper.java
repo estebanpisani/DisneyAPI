@@ -87,6 +87,7 @@ public class CharacterMapper {
 		List<CharacterBasicDTO> dtos= new ArrayList<>();
 		for (Character character : characters) {
 			CharacterBasicDTO dto = new CharacterBasicDTO();
+			dto.setId(character.getId());
 			dto.setName(character.getName());
 			dto.setImage(character.getImage());
 			dtos.add(dto);
