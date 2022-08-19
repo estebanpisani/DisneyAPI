@@ -5,7 +5,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alkemy.disneyapi.dto.CharacterBasicDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.alkemy.disneyapi.dto.MovieBasicDTO;
@@ -15,8 +17,9 @@ import com.alkemy.disneyapi.services.GenreService;
 
 @Component
 public class MovieMapper {
-	//@Autowired
-	//CharacterMapper characterMapper;
+
+	@Autowired
+	CharacterMapper characterMapper;
 	@Autowired
 	GenreMapper genreMapper;
 	
@@ -46,12 +49,12 @@ public class MovieMapper {
 		if(movie.getGenre() != null) {
 			dto.setGenre(genreMapper.genreEntity2DTO(movie.getGenre()));
 		}
-		/*
-		if (loadCharacters) {
+
+		if (loadCharacters && movie.getCharacters() != null) {
 			List<CharacterBasicDTO> charactersDTO = this.characterMapper.characterEntityList2BasicDTOList(movie.getCharacters());
 			dto.setCharacters(charactersDTO);
 		}
-		 */
+
 		return dto;
 	}
 	

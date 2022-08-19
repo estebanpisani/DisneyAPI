@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.alkemy.disneyapi.dto.CharacterBasicDTO;
@@ -20,16 +21,9 @@ import com.alkemy.disneyapi.services.MovieService;
 public class CharacterMapper {
 	@Autowired
 	MovieRepository movieRepository;
-	@Autowired
-	MovieService movieServ;
+	@Lazy
 	@Autowired
 	MovieMapper movieMapper;
-	
-	
-	/*
-	 * Crea una entidad con los atributos del DTO que llega por parámetro.
-	 * Retorna la entidad creada.
-	 */
 	
 	public Character characterDTO2Entity(CharacterDTO dto) {
 		Character character = new Character();
@@ -45,18 +39,12 @@ public class CharacterMapper {
 					if (result.isPresent()) {
 						Movie movie = result.get();
 						character.getMovies().add(movie);
-						movie.getCharacters().add(character);
-						movieRepository.save(movie);
 					}
 				}
 			}
 		return character;
 	}
-	/*
-	 * Crea un objeto DTO con los atributos de la entidad solicitada.
-	 * @param loadMovies(boolean): crea una lista con información básica de las películas del personaje (MovieBasicDTO) y se la agrega al DTO. 
-	 * @return Retorna el objeto DTO creado.
-	 */
+
 	public CharacterDTO characterEntity2DTO(Character character, boolean loadMovies) {
 		CharacterDTO dto = new CharacterDTO();
 		dto.setId(character.getId());
