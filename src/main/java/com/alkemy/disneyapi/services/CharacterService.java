@@ -97,13 +97,13 @@ public class CharacterService {
 		if(weight != null){
 			filtersDTO.setWeight(weight);
 		}
-		if(movies != null & movies.size()>=1){
+		if(movies != null){
 			filtersDTO.setMovies(movies);
 		}
 		filtersDTO.setOrder(order);
 
 		List<Character> characters= characterRepo.findAll(characterSpecification.getByFilters(filtersDTO));
-		List<CharacterDTO> dtos = characterMapper.characterEntityList2DTOList(characters, false);
+		List<CharacterDTO> dtos = characterMapper.characterEntityList2DTOList(characters, true);
 		return dtos;
 	}
 

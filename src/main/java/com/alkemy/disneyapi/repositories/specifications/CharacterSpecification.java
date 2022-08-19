@@ -27,22 +27,18 @@ public class CharacterSpecification {
 		return (root, query, criteriaBuilder) ->{
 			List<Predicate> predicates = new ArrayList<>();
 
-			if(filtersDTO.getName() != null && filtersDTO.getName().isEmpty()) {
+			if(filtersDTO.getName() != null && !filtersDTO.getName().isEmpty()) {
 				predicates.add(
 						criteriaBuilder.like(
 								criteriaBuilder.lower(root.get("name")),
 								"%" + filtersDTO.getName().toLowerCase()+"%")
 				);
 			}	
-
-			if(filtersDTO.getAge() != null && !filtersDTO.getAge().toString().isEmpty()) {
-				predicates.add(
-						criteriaBuilder.like(
-								criteriaBuilder.lower(root.get("age")),
-								"%" + filtersDTO.getAge().toString().toLowerCase()+"%")
-				);
+			//TODO search with Integer
+			if(filtersDTO.getAge() != null) {
+				predicates.add(criteriaBuilder.like(root.get("age"), filtersDTO.getAge().toString()));
 			}
-
+			//TODO search with Double
 			if(filtersDTO.getWeight() != null && !filtersDTO.getWeight().toString().isEmpty()){
 				predicates.add(criteriaBuilder.like(root.get("weight"), filtersDTO.getWeight().toString()));
 			}
