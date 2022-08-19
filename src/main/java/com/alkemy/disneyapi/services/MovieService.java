@@ -5,7 +5,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
+import com.alkemy.disneyapi.dto.CharacterDTO;
 import com.alkemy.disneyapi.dto.MovieFiltersDTO;
+import com.alkemy.disneyapi.entities.Character;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +36,8 @@ public class MovieService {
 	public MovieDTO saveMovie(MovieDTO dto) {
 		Movie movie = movieMapper.movieDTO2Entity(dto);
 		Movie newMovie = movieRepo.save(movie);
-		MovieDTO result = movieMapper.movieEntity2DTO(movie, false);
+		System.out.println(newMovie.getGenreId());
+		MovieDTO result = movieMapper.movieEntity2DTO(newMovie, false);
 		return result;
 	}
 	
@@ -78,20 +81,26 @@ public class MovieService {
 		return dtos;
 	}
 
-	public MovieDTO getMovieDetails(String id) {
-		Movie movie = movieRepo.getById(id);
-		MovieDTO dto = movieMapper.movieEntity2DTO(movie, true);	
-		return dto;	
+	public MovieDTO getMovieDetails(String id) throws Exception {
+		try{
+			Optional<Movie> result = movieRepo.findById(id);
+			if(result.isPresent()){
+				Movie movie = result.get();
+				MovieDTO dto = movieMapper.movieEntity2DTO(movie, true);
+				return dto;
+			}else{
+				throw new Exception("Movie not found.");
+			}
+		} catch (Exception e) {
+			throw new Exception("Movie not found.");
+		}
 	}
 
-	public List<MovieDTO> findByFilters(String name, String creationDate, String genre, String order) {
+	public List<MovieDTO> findByFilters(String name, String genre, String order) {
 		MovieFiltersDTO filtersDTO = new MovieFiltersDTO();
 
 		if(name != null && !name.isEmpty()){
-			filtersDTO.setName(name);
-		}
-		if(creationDate != null && !creationDate.isEmpty()){
-			filtersDTO.setCreationDate(creationDate);
+			filtersDTO.setTitle(name);
 		}
 		if(genre != null && !genre.isEmpty()){
 			filtersDTO.setGenre(genre);

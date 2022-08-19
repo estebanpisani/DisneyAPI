@@ -46,7 +46,7 @@ public class MyUserController {
 	}
 	
 	@PostMapping("/signin")
-	public ResponseEntity<AuthenticationResponse> signUp(@RequestBody AuthenticationRequest request) throws Exception{
+	public ResponseEntity<AuthenticationResponse> signIn(@RequestBody AuthenticationRequest request) throws Exception{
 		UserDetails userDetails;
 		try {
 			Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));

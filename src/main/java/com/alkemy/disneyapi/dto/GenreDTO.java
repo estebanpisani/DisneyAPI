@@ -14,5 +14,5 @@ public class GenreDTO {
 	private String id;
 	private String name;
 	private String image;
-	private List<Movie> movies;
+//	private List<Movie> movies;
 }

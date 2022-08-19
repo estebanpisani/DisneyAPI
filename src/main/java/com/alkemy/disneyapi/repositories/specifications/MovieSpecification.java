@@ -23,11 +23,11 @@ public class MovieSpecification {
 			
 			List<Predicate> predicates = new ArrayList<>();
 			
-			if(filtersDTO.getName() != null && !filtersDTO.getName().isEmpty()) {
+			if(filtersDTO.getTitle() != null && !filtersDTO.getTitle().isEmpty()) {
 				predicates.add(
 						criteriaBuilder.like(
 								criteriaBuilder.lower(root.get("title")),
-								"%" + filtersDTO.getName().toLowerCase()+"%")
+								"%" + filtersDTO.getTitle().toLowerCase()+"%")
 				);
 			}	
 			
@@ -42,10 +42,10 @@ public class MovieSpecification {
 
 			//TODO OrderByDate
 			if(filtersDTO.getOrder().equalsIgnoreCase("desc")){
-				query.orderBy(criteriaBuilder.desc(root.get("name")));
+				query.orderBy(criteriaBuilder.desc(root.get("title")));
 			}
 			else{
-				query.orderBy(criteriaBuilder.asc(root.get("name")));
+				query.orderBy(criteriaBuilder.asc(root.get("title")));
 			}
 			
 			return criteriaBuilder.and(predicates.toArray(new Predicate[0]));

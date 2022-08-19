@@ -40,9 +40,12 @@ public class MovieMapper {
 		if(movie.getCreationDate()!=null) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 		dto.setCreationDate(movie.getCreationDate().format(formatter));}
-		
+
 		dto.setImage(movie.getImage());
-		dto.setGenre(genreMapper.genreEntity2DTO(movie.getGenre()));
+		dto.setGenreId(movie.getGenreId());
+		if(movie.getGenre() != null) {
+			dto.setGenre(genreMapper.genreEntity2DTO(movie.getGenre()));
+		}
 		/*
 		if (loadCharacters) {
 			List<CharacterBasicDTO> charactersDTO = this.characterMapper.characterEntityList2BasicDTOList(movie.getCharacters());
@@ -83,6 +86,7 @@ public class MovieMapper {
 		List<MovieBasicDTO> dtos = new ArrayList<>();
 		for (Movie movie : movies) {
 			MovieBasicDTO dto = new MovieBasicDTO();
+			dto.setId(movie.getId());
 			dto.setTitle(movie.getTitle());
 			if(movie.getCreationDate()!=null) {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");

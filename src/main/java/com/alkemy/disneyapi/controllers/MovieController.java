@@ -25,18 +25,17 @@ public class MovieController {
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<MovieDTO> getMovieDetails(@PathVariable String id){
+	public ResponseEntity<MovieDTO> getMovieDetails(@PathVariable String id) throws Exception {
 		return ResponseEntity.ok().body(movieServ.getMovieDetails(id));
 	}
 
 	@GetMapping
 	public ResponseEntity<List<MovieDTO>> getByFilters(
 			@RequestParam(required = false) String name,
-			@RequestParam(required = false) String creationDate,
 			@RequestParam(required = false) String genre,
 			@RequestParam(required = false, defaultValue = "asc") String order
 	){
-		List<MovieDTO> movies = movieServ.findByFilters(name, creationDate, genre, order);
+		List<MovieDTO> movies = movieServ.findByFilters(name, genre, order);
 		return ResponseEntity.ok(movies);
 	}
 	
