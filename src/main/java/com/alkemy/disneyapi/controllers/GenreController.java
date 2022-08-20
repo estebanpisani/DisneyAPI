@@ -18,7 +18,7 @@ public class GenreController {
 	@Autowired
 	private GenreService genreServ;
 
-	@GetMapping("/all")
+	@GetMapping
 	public ResponseEntity<List<GenreDTO>> getAllGenres() throws Exception {
 		return ResponseEntity.ok().body(genreServ.getAllGenres());
 	}
