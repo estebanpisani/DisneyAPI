@@ -46,7 +46,7 @@ Development of an API to explore the world of Disney, which will allow knowing a
 - `[DELETE] /movies/:id`: delete a genre from the database.
 
 ## Getting Started
-You must some enviroment variables:
+You need some enviroment variables:
  - `API_KEY`: api key provided by email sender.
  - `EMAIL`: email sender's address.
  - `SECRET_KEY`: jwt secret key.
