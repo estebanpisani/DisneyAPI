@@ -14,6 +14,8 @@ Development of an API to explore the world of Disney, which will allow knowing a
 
 ## Endpoints
 
+**Note:** All the requests require authentication.
+
 ### User Authentication
 
 - `/auth/login`
