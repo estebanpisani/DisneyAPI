@@ -15,18 +15,12 @@ import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Content;
 import com.sendgrid.helpers.mail.objects.Email;
 
-//@Service
+@Service
 public class EmailService {
-	
-	//Agregar campos en application.properties
-//	@Value("${app.sendgrid.email}")
-	private String emailSender;
-//	@Value("${app.sendgrid.key}")
-	String apiKey;
-	
+
 	public void sendWelcomeEmailTo(String to) {
 		
-		Email fromEmail = new Email(emailSender);
+		Email fromEmail = new Email(System.getenv("EMAIL"));
 		Email toEmail = new Email(to);
 		Content content = new Content(
 				"text/plain",
@@ -37,7 +31,7 @@ public class EmailService {
 		
 		Mail mail = new Mail(fromEmail, subject, toEmail, content);
 		
-		SendGrid sg = new SendGrid(apiKey);
+		SendGrid sg = new SendGrid(System.getenv("API_KEY"));
 		Request request = new Request();
 		
 		try {
@@ -48,15 +42,7 @@ public class EmailService {
 		} catch (IOException e) {
 			System.out.println("Error trying to send the email.");
 		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
+
 	};
 
 }

@@ -3,10 +3,12 @@ package com.alkemy.disneyapi.security;
 import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.alkemy.disneyapi.dto.UserDTO;
@@ -19,9 +21,11 @@ public class UserDetailsCustomService implements UserDetailsService {
 	
 	@Autowired
 	MyUserRepository userRepo;
-	
-//	@Autowired
-//	private EmailService emailService;
+	@Autowired
+	private EmailService emailService;
+	@Lazy
+	@Autowired
+	PasswordEncoder passwordEncoder;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -36,12 +40,12 @@ public class UserDetailsCustomService implements UserDetailsService {
 	public boolean save(UserDTO userDTO) {
 		MyUser user = new MyUser();
 		user.setUsername(userDTO.getUsername());
-		user.setPassword(userDTO.getPassword());
+		user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
 		user = userRepo.save(user);
 		
-//		if(user!=null) {
-//			emailService.sendWelcomeEmailTo(user.getUsername());
-//		}
+		if(user!=null) {
+			emailService.sendWelcomeEmailTo(user.getUsername());
+		}
 		
 		return user!=null;
 	}

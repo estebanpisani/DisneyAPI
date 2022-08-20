@@ -34,13 +34,13 @@ public class CharacterSpecification {
 								"%" + filtersDTO.getName().toLowerCase()+"%")
 				);
 			}	
-			//TODO search with Integer
+
 			if(filtersDTO.getAge() != null) {
-				predicates.add(criteriaBuilder.like(root.get("age"), filtersDTO.getAge().toString()));
+				predicates.add(criteriaBuilder.like(root.get("age").as(String.class), filtersDTO.getAge().toString()));
 			}
-			//TODO search with Double
-			if(filtersDTO.getWeight() != null && !filtersDTO.getWeight().toString().isEmpty()){
-				predicates.add(criteriaBuilder.like(root.get("weight"), filtersDTO.getWeight().toString()));
+
+			if(filtersDTO.getWeight() != null) {
+				predicates.add(criteriaBuilder.like(root.get("weight").as(String.class), "%"+filtersDTO.getWeight().toString()+"%"));
 			}
 
 			if(filtersDTO.getMovies() != null && filtersDTO.getMovies().size()>=1 && !filtersDTO.getMovies().isEmpty()){
